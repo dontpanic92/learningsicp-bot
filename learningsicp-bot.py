@@ -13,7 +13,7 @@ class MojoPostHandler(BaseHTTPRequestHandler):
         req =  request.Request(url, data=parse.urlencode(data).encode())
         resp = request.urlopen(req)
 
-    def _handle_group_message(self, content):
+    def _broadcast_message(self, content):
         forward_text = "{}:\n{}".format(content["sender"], content["content"])
 
         for g in groups:
@@ -29,8 +29,8 @@ class MojoPostHandler(BaseHTTPRequestHandler):
         if content["post_type"] == "receive_message":
             print("Received message:", content["type"])
 
-            if content["type"] == "group_message":
-                self._handle_group_message(content)
+            if content["type"] == "group_message" and content["group"] in groups:
+                self._broadcast_message(content)
 
         
         self.send_response(200)
